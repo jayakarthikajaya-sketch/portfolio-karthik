@@ -5,7 +5,6 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Added smooth scrolling behavior for a fluid navigation experience */
 html {
     scroll-behavior: smooth;
 }
@@ -14,17 +13,19 @@ body {
     background-color: #f4f7f6;
     color: #333;
     line-height: 1.6;
-    overflow-x: hidden; /* Prevents unwanted horizontal bounce during slide animations */
+    overflow-x: hidden; 
 }
 
 .container {
+    width: 100%;
     max-width: 1100px;
     margin: auto;
-    padding: 2.5rem 1.5rem;
+    /* Automatically scales padding based on screen width */
+    padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem);
 }
 
 section {
-    margin-bottom: 3rem;
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
 }
 
 h2 {
@@ -32,20 +33,24 @@ h2 {
     margin-bottom: 1.5rem;
     position: relative;
     color: #2c3e50;
+    /* Fluid font-size: automatically scales between 1.75rem and 2.25rem */
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
 }
 
 .section-subtitle {
     text-align: center;
     color: #7f8c8d;
     margin-bottom: 2rem;
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 2vw, 1rem);
     margin-top: -1rem;
+    padding: 0 0.5rem;
 }
 
+/* Animations */
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -65,22 +70,29 @@ h2 {
 }
 
 /* ==========================================
-   3. NAVIGATION
+   3. NAVIGATION (Automatically stacks or aligns)
    ========================================== */
 nav {
     background: #2c3e50;
     color: white;
-    padding: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 5vw, 3rem);
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap; /* Allows natural wrapping if space is tight */
+    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
     z-index: 100;
 }
 
 nav .logo {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 3vw, 1.75rem);
     font-weight: bold;
+    /* Automatically centers logo on mobile, snaps left on desktop */
+    margin: 0 auto;
+}
+
+@media (min-width: 600px) {
+    nav .logo { margin: 0; }
 }
 
 nav ul {
@@ -88,7 +100,12 @@ nav ul {
     flex-wrap: wrap;
     justify-content: center;
     list-style: none;
-    gap: 1.5rem; 
+    gap: clamp(1rem, 2.5vw, 2rem); 
+    margin: 0 auto;
+}
+
+@media (min-width: 600px) {
+    nav ul { margin: 0; }
 }
 
 nav ul li a {
@@ -97,10 +114,10 @@ nav ul li a {
     font-weight: 500;
     position: relative;
     padding-bottom: 4px;
+    font-size: clamp(0.95rem, 2vw, 1rem);
     transition: color 0.3s ease;
 }
 
-/* MOTION: Smooth sliding underline effect on hover */
 nav ul li a::after {
     content: '';
     position: absolute;
@@ -125,73 +142,74 @@ nav ul li a:hover::after {
    ========================================== */
 header {
     background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9)) no-repeat center center/cover;
-    min-height: 60vh; 
+    /* Scales height beautifully across all device form factors */
+    min-height: clamp(50vh, 60vh, 70vh); 
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 3rem 1rem;
 }
 
 .profile-pic {
-    width: 160px;
-    height: 160px;
+    /* Profile photo scales up naturally on larger viewports */
+    width: clamp(130px, 20vw, 200px);
+    height: clamp(130px, 20vw, 200px);
     border-radius: 50%;
     object-fit: cover; 
     border: 4px solid #1abc9c; 
     margin-bottom: 1.5rem;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    /* MOTION: Hero elements fade in smoothly on page load */
     animation: scaleIn 0.8s ease-out forwards;
 }
 
 header h1 {
-    font-size: 2.2rem;
+    font-size: clamp(1.8rem, 6vw, 3.5rem);
     margin-bottom: 0.5rem;
     line-height: 1.2;
-    /* MOTION: Slighter delay after profile picture pops in */
     animation: fadeInUp 0.8s ease-out 0.2s backwards;
 }
 
 header p {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
     color: #1abc9c;
     font-weight: bold;
     animation: fadeInUp 0.8s ease-out 0.4s backwards;
 }
 
 /* ==========================================
-   5. CONTENT COMPONENTS & INTERACTIONS
+   5. CONTENT COMPONENTS (Auto-fit Grids)
    ========================================== */
 .about-content {
     text-align: center;
     max-width: 800px;
     margin: 0 auto;
-    font-size: 1.05rem;
+    font-size: clamp(1rem, 2vw, 1.05rem);
+    padding: 0 0.5rem;
 }
 
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 1.2rem;
+    /* Automatically arranges items into matching columns based on space */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
+    gap: clamp(1rem, 2vw, 1.2rem);
     text-align: center;
 }
 
 .skill-card {
     background: white;
-    padding: 1.2rem;
+    padding: clamp(1rem, 2vw, 1.2rem);
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     font-weight: bold;
     color: #2c3e50;
+    font-size: clamp(0.9rem, 2vw, 1rem);
     border-bottom: 3px solid #1abc9c;
-    /* MOTION: Sets up transition baseline */
     transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
 }
 
-/* MOTION: Skill cards lift slightly on hover */
 .skill-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 15px rgba(0,0,0,0.1);
@@ -199,7 +217,8 @@ header p {
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* Perfect auto-responsive grid layout for product cards */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 1.5rem;
 }
 
@@ -208,34 +227,32 @@ header p {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    /* MOTION: Smooth setup for card pop out */
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 
-/* MOTION: Interactive scale-up and shadow deepener for active selection */
 .project-card:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 0 12px 24px rgba(0,0,0,0.15);
 }
 
 .project-info {
-    padding: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 1.5rem);
 }
 
 .project-info h3 {
     margin-bottom: 0.5rem;
     color: #2c3e50;
+    font-size: clamp(1.15rem, 2.5vw, 1.3rem);
 }
 
 .project-info a {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2vw, 1.1rem);
     color: #1abc9c;
     text-decoration: none;
     display: inline-block;
     transition: transform 0.2s ease;
 }
 
-/* MOTION: Nudges link text to the right on link hover */
 .project-info a:hover {
     transform: translateX(4px);
 }
@@ -248,13 +265,13 @@ header p {
     width: 100%;
     max-width: 550px;
     margin: 0 auto;
-    padding: 1.5rem;
-    border-radius: 12px;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border-radius: clamp(12px, 2vw, 16px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .contact-card h3 {
-    font-size: 1.3rem;
+    font-size: clamp(1.2rem, 2.5vw, 1.3rem);
     color: white;
     margin-bottom: 1.2rem;
     display: flex;
@@ -272,15 +289,13 @@ header p {
     background: #ffffff;
     border: 1px solid #ccc;
     border-radius: 6px;
-    padding: 0.8rem;
+    padding: clamp(0.75rem, 2vw, 0.8rem);
     color: #333;
     font-size: 0.95rem;
     outline: none;
-    /* MOTION: Prepares the border to change colors gracefully */
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* MOTION: Input field glow on focus */
 .form-group input:focus, 
 .form-group textarea:focus {
     border-color: #1abc9c;
@@ -297,7 +312,6 @@ header p {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    /* MOTION: Handles both standard hover and click scale */
     transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
@@ -305,7 +319,6 @@ header p {
     background-color: #16a085;
 }
 
-/* MOTION: Subtle shrink tactile response when user clicks the button */
 .submit-btn:active {
     transform: scale(0.98);
 }
@@ -317,7 +330,7 @@ header p {
 
 .contact-details p {
     margin: 0.5rem 0;
-    font-size: 1rem;
+    font-size: clamp(0.95rem, 2vw, 1rem);
 }
 
 .contact-details a {
@@ -331,55 +344,5 @@ footer {
     color: white;
     text-align: center;
     padding: 1.5rem;
-    font-size: 0.9rem;
-}
-
-/* ==========================================
-   7. LAPTOP / DESKTOP STYLES (768px and wider)
-   ========================================== */
-@media (min-width: 768px) {
-    .container {
-        padding: 4rem 2rem;
-    }
-
-    section {
-        margin-bottom: 4rem;
-    }
-
-    nav {
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 2rem 3rem;
-    }
-
-    nav ul {
-        gap: 0;
-    }
-
-    nav ul li {
-        margin-left: 2rem;
-    }
-
-    header {
-        height: 70vh;
-        padding: 0 1rem;
-    }
-
-    .profile-pic {
-        width: 200px;
-        height: 200px;
-    }
-
-    header h1 {
-        font-size: 3.5rem;
-    }
-
-    header p {
-        font-size: 1.25rem;
-    }
-
-    .contact-card {
-        padding: 2.5rem;
-        border-radius: 16px;
-    }
+    font-size: clamp(0.85rem, 2vw, 0.9rem);
 }

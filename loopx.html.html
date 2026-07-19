@@ -1,0 +1,227 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoopX | Campus Circular Economy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #00f2ad; --bg: #0f172a; --surface: #1e293b; --text: #f8fafc; --text-dim: #94a3b8; --danger: #ff4b5c; --grad: linear-gradient(135deg, #00f2ad 0%, #00a3ff 100%); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
+
+        /* Navigation */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; box-shadow: 0 -10px 20px rgba(0,0,0,0.3); }
+        .nav-item { text-align: center; font-size: 0.7rem; color: var(--text-dim); cursor: pointer; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-icon { font-size: 1.4rem; display: block; margin-bottom: 2px; }
+
+        /* Page System */
+        .page { display: none; padding: 20px; padding-bottom: 100px; animation: fadeIn 0.4s ease; max-width: 500px; margin: 0 auto; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Hero / Landing Elements */
+        .hero { background: var(--grad); padding: 30px; border-radius: 24px; color: #0f172a; margin-bottom: 25px; position: relative; overflow: hidden; }
+        .hero h1 { margin: 0; font-size: 1.8rem; font-weight: 800; }
+        .hero p { font-size: 0.9rem; font-weight: 600; opacity: 0.9; }
+
+        /* Cards & Buttons */
+        .card { background: var(--surface); padding: 18px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #334155; }
+        .btn-main { background: var(--primary); color: #0f172a; border: none; padding: 14px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 8px; font-size: 1rem; }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; margin-top: 8px; }
+        
+        /* Chat UI */
+        #chat-window { height: 350px; overflow-y: auto; background: #0b1120; border-radius: 20px; padding: 15px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #334155; }
+        .bubble { padding: 10px 15px; border-radius: 18px; font-size: 0.9rem; max-width: 80%; line-height: 1.4; }
+        .received { background: #334155; align-self: flex-start; }
+        .sent { background: var(--primary); color: #000; align-self: flex-end; font-weight: 600; }
+
+        /* Forms */
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        .badge { background: #000; color: var(--primary); font-size: 0.6rem; padding: 3px 7px; border-radius: 5px; text-transform: uppercase; font-weight: 900; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" style="height: 100vh; display: grid; place-items: center; padding: 20px;">
+        <div class="card" style="text-align: center; width: 100%; max-width: 380px; border: 1px solid var(--primary);">
+            <h1 style="color:var(--primary); margin:0; font-size: 2.5rem;">♻ LoopX</h1>
+            <p style="color:var(--text-dim);">Verified Campus Marketplace</p>
+            <input type="text" id="login-name" placeholder="Full Name">
+            <select id="login-college">
+                <option value="">Select University</option>
+                <option>Engineering Campus</option>
+                <option>Science & Tech Univ</option>
+            </select>
+            <button class="btn-main" onclick="doLogin()">Sign in with .edu Email</button>
+        </div>
+    </div>
+
+    <div id="app-body" style="display:none;">
+        
+        <div id="page-home" class="page active">
+            <div class="hero">
+                <h1>Don't Trash It,<br>Cash It. 💰</h1>
+                <p>Circular Economy at <span id="span-college">Campus</span></p>
+                <div style="position:absolute; right:-20px; bottom:-20px; font-size: 8rem; opacity:0.2;">♻</div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn-main" style="margin:0;" onclick="nav('sell')">📤 Sell Item</button>
+                <button class="btn-outline" style="margin:0;" onclick="nav('buy')">🛒 Buy Gear</button>
+            </div>
+
+            <h3>🔥 Move-Out Mode</h3>
+            <div class="card" style="border-left: 5px solid var(--primary);" onclick="nav('buy')">
+                <div style="display:flex; gap:15px; align-items:center;">
+                    <div style="font-size:2.5rem;">📦</div>
+                    <div>
+                        <b style="color:var(--primary)">Dorm Bundles</b><br>
+                        <small>Sell everything fast in one click</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-buy" class="page">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>Marketplace</h2>
+                <div style="background:#334155; padding:5px 12px; border-radius:20px; font-size:0.7rem">📍 <span id="loc-tag">Campus</span></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <div class="card" style="text-align:center">
+                    <div style="font-size:3rem">🚲</div>
+                    <b>Hero MTB</b><br><small>₹1,600</small>
+                    <button class="btn-main" style="padding:6px; font-size:0.7rem" onclick="openChat('Hero MTB', 'Karthik R.')">Message Seller</button>
+                </div>
+                <div class="card" style="text-align:center">
+                    <div style="font-size:3rem">📚</div>
+                    <b>Physics Kit</b><br><small>₹450</small>
+                    <button class="btn-main" style="padding:6px; font-size:0.7rem" onclick="openChat('Physics Kit', 'Murali K.')">Message Seller</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-chat" class="page">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                <button onclick="nav('buy')" style="background:none; border:none; color:var(--primary); font-size:1.5rem; cursor:pointer">←</button>
+                <div>
+                    <h3 id="chat-header" style="margin:0">Seller</h3>
+                    <small id="chat-sub" style="color:var(--text-dim)"></small>
+                </div>
+            </div>
+            <div id="chat-window">
+                <div class="bubble received">Is the item still available? Can we meet at the Student Union?</div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <input type="text" id="chat-input" placeholder="Type message..." style="margin:0">
+                <button class="btn-main" style="width:70px; margin:0" onclick="sendMsg()">Send</button>
+            </div>
+        </div>
+
+        <div id="page-sell" class="page">
+            <h2>List an Item</h2>
+            <div class="card">
+                <div onclick="document.getElementById('file').click()" style="border:2px dashed var(--primary); border-radius:15px; padding:30px; text-align:center; cursor:pointer; background: rgba(0,242,173,0.05);">
+                    <div id="up-prompt">📸 Click to Upload Product JPG</div>
+                    <img id="up-preview" style="width:100%; display:none; border-radius:10px;">
+                </div>
+                <input type="file" id="file" style="display:none" accept="image/*" onchange="previewImg(event)">
+                <input type="text" id="p-title" placeholder="Item Name">
+                <input type="number" id="p-price" placeholder="Price (₹)">
+                <button class="btn-main" onclick="postItem()">Post to Campus</button>
+            </div>
+        </div>
+
+        <div id="page-profile" class="page">
+            <div class="card" style="text-align:center; background: var(--grad); color:#000; border:none;">
+                <h2 id="prof-name" style="margin:0">Student</h2>
+                <span class="badge">Verified Student</span>
+            </div>
+            <h4>Your Active Listings</h4>
+            <div id="my-listings">
+                <p style="color:var(--text-dim); font-size:0.8rem">No items currently for sale.</p>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="nav('home')"><span class="nav-icon">🏠</span>Home</div>
+            <div class="nav-item" onclick="nav('buy')"><span class="nav-icon">🛒</span>Buy</div>
+            <div class="nav-item" onclick="nav('sell')"><span class="nav-icon">📤</span>Sell</div>
+            <div class="nav-item" onclick="nav('profile')"><span class="nav-icon">👤</span>Profile</div>
+        </nav>
+    </div>
+
+    <script>
+        let currentImg = "";
+
+        function doLogin() {
+            const name = document.getElementById('login-name').value;
+            const coll = document.getElementById('login-college').value;
+            if(!name || !coll) return alert("Please enter your details");
+            document.getElementById('prof-name').innerText = name;
+            document.getElementById('span-college').innerText = coll;
+            document.getElementById('loc-tag').innerText = coll;
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-body').style.display = 'block';
+        }
+
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            if(id !== 'chat') {
+                const map = {home:0, buy:1, sell:2, profile:3};
+                document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+            }
+        }
+
+        function previewImg(e) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = document.getElementById('up-preview');
+                img.src = reader.result; img.style.display = 'block';
+                document.getElementById('up-prompt').style.display = 'none';
+                currentImg = reader.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function postItem() {
+            const t = document.getElementById('p-title').value;
+            const p = document.getElementById('p-price').value;
+            if(!t || !p || !currentImg) return alert("Complete all fields!");
+
+            const list = document.getElementById('my-listings');
+            if(list.innerText.includes("No items")) list.innerHTML = "";
+            const id = Date.now();
+            list.innerHTML += `
+                <div class="card" id="item-${id}" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <img src="${currentImg}" style="width:50px; height:50px; border-radius:8px; object-fit:cover;">
+                        <div><b>${t}</b><br>₹${p}</div>
+                    </div>
+                    <button onclick="document.getElementById('item-${id}').remove()" style="background:var(--danger); border:none; color:white; padding:5px 10px; border-radius:5px; font-size:0.7rem; cursor:pointer;">Remove</button>
+                </div>
+            `;
+            alert("Listed Successfully!");
+            nav('profile');
+        }
+
+        function openChat(item, seller) {
+            document.getElementById('chat-header').innerText = seller;
+            document.getElementById('chat-sub').innerText = "Inquiry for " + item;
+            nav('chat');
+        }
+
+        function sendMsg() {
+            const input = document.getElementById('chat-input');
+            if(!input.value) return;
+            document.getElementById('chat-window').innerHTML += `<div class="bubble sent">${input.value}</div>`;
+            input.value = "";
+            const win = document.getElementById('chat-window');
+            win.scrollTop = win.scrollHeight;
+        }
+    </script>
+</body>
+</html>
